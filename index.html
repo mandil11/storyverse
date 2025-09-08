@@ -342,19 +342,22 @@ const updateUI = () => {
       function listenToStories() {
         if (unsubscribeStories) unsubscribeStories();
 // listenToStories() — replace problematic line with this:
-unsubscribeStories = db.collection('stories').orderBy('createdAt', 'desc')
+// ✅ Only fetch approved stories
+unsubscribeStories = db.collection("stories")
+  .where("approved", "==", true)
   .onSnapshot(snapshot => {
     storiesCache = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    storiesCache.forEach(s => {
-      if (s.createdAt && s.createdAt.toMillis) s.createdAt = s.createdAt.toMillis();
-      s.likes = s.likes || [];
-      s.comments = s.comments || [];
-    });
+
+    // manual sort by createdAt
+    storiesCache.sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
+
     displayStories();
   }, err => {
-    console.error('Stories snapshot error:', err);
-    showToast('Unable to load stories: ' + err.message, 'error');
+    console.error("Stories snapshot error:", err);
+    showToast("Unable to load stories: " + err.message, "error");
   });
+
+
 
       }
 
@@ -724,28 +727,31 @@ editProfileForm.addEventListener('submit', async (e) => {
       });
 
       // Story form submission -> save to Firestore
-storyForm.addEventListener('submit', async e => {
-  e.preventDefault();
-  const text = storyText.value.trim();
-  if (!text) return;
-
-  // new users -> approved: false | trusted users -> approved: true
-  const isTrusted = currentUser.role === "trusted" || currentUser.role === "admin";
-
-  await db.collection('stories').add({
+      storyForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const text = storyText.value.trim();
+        if (!text) { showToast('The void demands words before it will listen', 'warning'); return; }
+        if (!currentUser) { showAuthRequiredModal(); return; }
+        try {
+await db.collection('stories').add({
     text,
     authorId: currentUser.id,
     authorName: currentUser.name,
     createdAt: firebase.firestore.FieldValue.serverTimestamp(),
     likes: [],
     comments: [],
-    approved: isTrusted   // 👈 trusted users auto approve
-  });
-
-  storyText.value = '';
-  showToast(isTrusted ? 'Story published ✅' : 'Story submitted! Awaiting approval ⏳', 'info');
+    approved: false   //  mehema denna one
 });
 
+          storyText.value = '';
+          charCount.textContent = '0/1000';
+          showToast('Your Story Has Been Uploaded This Page!', 'success');
+          // Firestore real-time listener will update UI automatically
+        } catch (err) {
+          console.error('post story error', err);
+          showToast('Unable to post story: ' + err.message, 'error');
+        }
+      });
 
       // Auth state listener: keep currentUser synced if user is already logged in
       auth.onAuthStateChanged(async (user) => {
@@ -767,6 +773,7 @@ storyForm.addEventListener('submit', async e => {
         updateUI();
       });
 
+      
       
 
       // Start listening to stories in real-time
