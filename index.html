@@ -3,10 +3,11 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>SM StoryVerse</title>
+    <title>D11 StoryVerse</title>
     <link rel="preconnect" href="https://fonts.googleapis.com"/>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/png" href="logo.png" />
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* (Keep all your original CSS — shortened here for brevity in this message,
@@ -32,7 +33,7 @@
     <div class="relative z-10 container mx-auto px-4 py-8 max-w-7xl">
         <header class="text-center mb-16 slide-in">
             <div class="relative inline-block">
-                <h1 class="text-6xl sm:text-8xl font-bold neon-text mb-6 tracking-tight">SM StoryVerse</h1>
+                <h1 class="text-6xl sm:text-8xl font-bold neon-text mb-6 tracking-tight">D11 StoryVerse</h1>
                 <div class="absolute -inset-4 bg-gradient-to-r from-purple-900/20 to-crimson-900/20 rounded-3xl blur-xl"></div>
                 <div class="absolute top-0 -right-20 w-48 h-48 bg-purple-700/10 rounded-full blur-3xl"></div>
             </div>
@@ -44,6 +45,34 @@
                 </div>
             </div>
         </header>
+
+        <!-- Edit Profile Modal -->
+<div id="edit-profile-modal" class="fixed inset-0 bg-black/80 backdrop-blur-sm hidden items-center justify-center p-4 z-50">
+  <div class="dark-modal rounded-3xl p-8 w-full max-w-md slide-in">
+    <div class="text-center mb-8">
+      <div class="w-20 h-20 mx-auto bg-gradient-to-br from-green-900 to-purple-900 rounded-2xl flex items-center justify-center text-3xl mb-4">✏️</div>
+      <h3 class="text-2xl font-bold mb-2 dark-text">Edit Profile</h3>
+      <p class="dark-text-secondary">Change your display name</p>
+    </div>
+    <form id="edit-profile-form" class="space-y-6">
+      <div>
+        <label class="block text-sm font-medium mb-2 dark-text">New Name</label>
+        <input type="text" id="edit-name" class="w-full dark-input rounded-xl p-4" required />
+      </div>
+      <button type="submit" class="w-full btn-gradient py-4 rounded-xl font-bold micro-interaction">Save</button>
+      <button type="button" id="cancel-edit" class="w-full glass py-3 rounded-xl font-medium hover:bg-purple-900/30 dark-text">Cancel</button>
+    </form>
+  </div>
+</div>
+
+
+<!-- Footer -->
+<footer class="fixed bottom-0 left-0 w-full glass-strong border-t border-purple-900/40 py-4 text-center z-50">
+  <p class="text-sm dark-text-secondary">© 2025 SM StoryVerse. All rights reserved.</p>
+  <p class="text-xs mt-1 dark-text">Made with ❤️ in D11 GROUP</p>
+</footer>
+
+
 
         <nav class="glass-strong rounded-3xl p-6 mb-12 slide-in">
             <div class="flex flex-col sm:flex-row justify-between items-center gap-6">
@@ -63,6 +92,7 @@
                     <button id="profile-btn" class="glass px-6 py-3 rounded-2xl font-semibold micro-interaction hover:bg-purple-500/20 dark-text hidden">👤 My Stories</button>
                     <button id="home-btn" class="glass px-6 py-3 rounded-2xl font-semibold micro-interaction hover:bg-indigo-500/20 dark-text hidden">🌌 Explore</button>
                     <button id="logout-btn" class="glass px-6 py-3 rounded-2xl font-semibold micro-interaction hover:bg-red-900/30 dark-text hidden">👋 Logout</button>
+                    <button id="edit-profile-btn" class="glass px-6 py-3 rounded-2xl font-semibold micro-interaction hover:bg-green-900/30 dark-text hidden">✏️ Edit Profile</button>
                 </div>
             </div>
         </nav>
@@ -72,13 +102,13 @@
                 <div class="flex items-center gap-4 mb-6">
                     <div class="w-16 h-16 rounded-2xl dark-avatar flex items-center justify-center text-2xl">✍️</div>
                     <div>
-                        <h2 class="text-2xl font-bold dark-text">Weave Your Tale</h2>
-                        <p class="dark-text-secondary">Let your shadows dance across the page</p>
+                        <h2 class="text-2xl font-bold dark-text">Write Your Story Here</h2>
+                        <p class="dark-text-secondary">Sri Lanka No 1 Story Uploading Hub</p>
                     </div>
                 </div>
                 <form id="story-form">
                     <div class="relative">
-                        <textarea id="story-text" rows="8" class="w-full dark-input rounded-2xl p-6 placeholder-gray-500 resize-none" placeholder="In the shadowed realm where whispers echo... 🌙"></textarea>
+                        <textarea id="story-text" rows="8" class="w-full dark-input rounded-2xl p-6 placeholder-gray-500 resize-none" placeholder="Write Your Special Story Here...✍️"></textarea>
                         <div class="absolute bottom-4 right-4 text-sm dark-text-secondary" id="char-count">0/1000</div>
                     </div>
                     <button type="submit" class="w-full mt-6 btn-gradient py-4 rounded-2xl font-bold text-lg micro-interaction glow-hover">RELEASE STORY</button>
@@ -268,36 +298,42 @@
       /*******************************
        * UI update based on auth
        *******************************/
-      const updateUI = () => {
-        if (currentUser) {
-          avatar.textContent = (currentUser.name || currentUser.displayName || 'U').charAt(0).toUpperCase();
-          userName.textContent = currentUser.name || currentUser.displayName || 'User';
-          userStatus.textContent = 'Embraced by Night';
-          userStatus.classList.add('text-purple-400');
-          userStatus.classList.remove('dark-text-secondary');
+const updateUI = () => {
+  if (currentUser) {
+    avatar.textContent = (currentUser.name || currentUser.displayName || 'U').charAt(0).toUpperCase();
+    userName.textContent = currentUser.name || currentUser.displayName || 'User';
+    userStatus.textContent = 'Write & Explore Stories';
+    userStatus.classList.add('text-purple-400');
+    userStatus.classList.remove('dark-text-secondary');
 
-          loginBtn.classList.add('hidden');
-          signupBtn.classList.add('hidden');
-          profileBtn.classList.remove('hidden');
-          homeBtn.classList.remove('hidden');
-          logoutBtn.classList.remove('hidden');
-          storyFormContainer.classList.remove('hidden');
-        } else {
-          avatar.textContent = '?';
-          userName.textContent = 'Guest User';
-          userStatus.textContent = 'Not Logged In';
-          userStatus.classList.remove('text-purple-400');
-          userStatus.classList.add('dark-text-secondary');
+    loginBtn.classList.add('hidden');
+    signupBtn.classList.add('hidden');
+    profileBtn.classList.remove('hidden');
+    homeBtn.classList.remove('hidden');
+    logoutBtn.classList.remove('hidden');
+    storyFormContainer.classList.remove('hidden');
 
-          loginBtn.classList.remove('hidden');
-          signupBtn.classList.remove('hidden');
-          profileBtn.classList.add('hidden');
-          homeBtn.classList.add('hidden');
-          logoutBtn.classList.add('hidden');
-          storyFormContainer.classList.add('hidden');
-        }
-        displayStories(); // re-render with correct auth context
-      };
+    // 👇 Add this line
+    currentPage = 'all-stories';
+    displayStories();
+    showToast("🌌 Stories unlocked! Explore now.", "success");
+  } else {
+    avatar.textContent = '?';
+    userName.textContent = 'Guest User';
+    userStatus.textContent = 'Not Logged In';
+    userStatus.classList.remove('text-purple-400');
+    userStatus.classList.add('dark-text-secondary');
+
+    loginBtn.classList.remove('hidden');
+    signupBtn.classList.remove('hidden');
+    profileBtn.classList.add('hidden');
+    homeBtn.classList.add('hidden');
+    logoutBtn.classList.add('hidden');
+    storyFormContainer.classList.add('hidden');
+  }
+  displayStories(); // re-render with correct auth context
+};
+
 
       /*******************************
        * Firestore: load stories (real-time)
@@ -378,7 +414,10 @@ unsubscribeStories = db.collection('stories').orderBy('createdAt', 'desc')
               <div class="w-14 h-14 rounded-2xl dark-avatar flex items-center justify-center text-xl font-bold">${(story.authorName||'U').charAt(0)}</div>
               <div class="flex-1">
                 <div class="font-bold text-xl dark-text">${story.authorName}</div>
-                <div class="text-sm dark-text-secondary">${new Date(story.createdAt).toLocaleDateString()}</div>
+                <div class="text-sm dark-text-secondary">
+  ${new Date(story.createdAt).toLocaleString()}
+</div>
+
               </div>
               ${isAuthor ? `<button class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-red-900/30 transition-colors delete-story" data-id="${story.id}">🗑️</button>` : ''}
             </div>
@@ -393,7 +432,7 @@ unsubscribeStories = db.collection('stories').orderBy('createdAt', 'desc')
                 <button class="flex items-center gap-2 like-btn ${hasLiked ? 'text-purple-400' : 'dark-text-secondary'}" data-id="${story.id}">${hasLiked ? '❤️' : '🤍'} <span class="text-sm">${(story.likes||[]).length}</span></button>
                 <button class="flex items-center gap-2 comment-btn dark-text-secondary" data-id="${story.id}">💬 <span class="text-sm">${(story.comments||[]).length}</span></button>
               </div>
-              <div class="text-xs dark-text-secondary">${Math.floor((Date.now() - story.createdAt) / 86400000)} nights ago</div>
+              <div class="text-xs dark-text-secondary">${Math.floor((Date.now() - story.createdAt) / 86400000)} Verified ✅ </div>
             </div>
             <div class="comments-section hidden" id="comments-${story.id}">
               <div class="space-y-4 mb-4">${commentsHtml}</div>
@@ -458,6 +497,41 @@ unsubscribeStories = db.collection('stories').orderBy('createdAt', 'desc')
         if (!currentUser) { showAuthRequiredModal(); return; }
         toggleLike(storyId);
       }
+      
+      const editProfileBtn = document.getElementById('edit-profile-btn');
+const editProfileModal = document.getElementById('edit-profile-modal');
+const editProfileForm = document.getElementById('edit-profile-form');
+const cancelEdit = document.getElementById('cancel-edit');
+
+// Show button only if logged in
+if (currentUser) editProfileBtn.classList.remove('hidden');
+
+// Show modal
+editProfileBtn.addEventListener('click', () => showModal(editProfileModal));
+cancelEdit.addEventListener('click', () => hideModal(editProfileModal));
+
+// Save new name
+editProfileForm.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const newName = document.getElementById('edit-name').value.trim();
+  if (!newName) return showToast("Name cannot be empty", "warning");
+  try {
+    // update Firestore
+    await db.collection('users').doc(currentUser.id).update({ name: newName });
+    // update local user object
+    currentUser.name = newName;
+    // update Firebase profile
+    const user = auth.currentUser;
+    if (user) await user.updateProfile({ displayName: newName });
+    hideModal(editProfileModal);
+    updateUI();
+    showToast("✅ Profile name updated!", "success");
+  } catch (err) {
+    console.error(err);
+    showToast("Error updating name: " + err.message, "error");
+  }
+});
+
 
       function commentToggleHandler(e) {
         const storyId = e.currentTarget.getAttribute('data-id');
@@ -557,7 +631,7 @@ unsubscribeStories = db.collection('stories').orderBy('createdAt', 'desc')
             return showToast('You are not allowed to delete this story', 'error');
           }
           await storyRef.delete();
-          showToast('Story consigned to oblivion', 'info');
+          showToast('Story Deleted', 'info');
         } catch (err) {
           console.error('deleteStory error', err);
           showToast('Unable to delete story: ' + err.message, 'error');
@@ -650,29 +724,28 @@ unsubscribeStories = db.collection('stories').orderBy('createdAt', 'desc')
       });
 
       // Story form submission -> save to Firestore
-      storyForm.addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const text = storyText.value.trim();
-        if (!text) { showToast('The void demands words before it will listen', 'warning'); return; }
-        if (!currentUser) { showAuthRequiredModal(); return; }
-        try {
-          await db.collection('stories').add({
-            text,
-            authorId: currentUser.id,
-            authorName: currentUser.name,
-            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-            likes: [],
-            comments: []
-          });
-          storyText.value = '';
-          charCount.textContent = '0/1000';
-          showToast('Your shadow has been cast upon the page!', 'success');
-          // Firestore real-time listener will update UI automatically
-        } catch (err) {
-          console.error('post story error', err);
-          showToast('Unable to post story: ' + err.message, 'error');
-        }
-      });
+storyForm.addEventListener('submit', async e => {
+  e.preventDefault();
+  const text = storyText.value.trim();
+  if (!text) return;
+
+  // new users -> approved: false | trusted users -> approved: true
+  const isTrusted = currentUser.role === "trusted" || currentUser.role === "admin";
+
+  await db.collection('stories').add({
+    text,
+    authorId: currentUser.id,
+    authorName: currentUser.name,
+    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+    likes: [],
+    comments: [],
+    approved: isTrusted   // 👈 trusted users auto approve
+  });
+
+  storyText.value = '';
+  showToast(isTrusted ? 'Story published ✅' : 'Story submitted! Awaiting approval ⏳', 'info');
+});
+
 
       // Auth state listener: keep currentUser synced if user is already logged in
       auth.onAuthStateChanged(async (user) => {
@@ -694,8 +767,18 @@ unsubscribeStories = db.collection('stories').orderBy('createdAt', 'desc')
         updateUI();
       });
 
+      
+
       // Start listening to stories in real-time
       listenToStories();
+
+      // Show toast when site loads if not logged in
+     window.addEventListener("load", () => {
+      if (!currentUser) {
+     showToast("🔒 Please log in to see stories", "warning", 6000);
+      }
+    });
+
 
       // Keyboard enter comment support (optional)
       document.addEventListener('keydown', (e) => {
@@ -729,6 +812,7 @@ unsubscribeStories = db.collection('stories').orderBy('createdAt', 'desc')
         background: #050508;
         overflow-x: hidden;
         color: #e0e0e0;
+  padding-bottom: 80px; /* footer height + little gap */
     }
 
     .bg-mesh {
