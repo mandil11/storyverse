@@ -109,7 +109,7 @@
                 <form id="story-form">
                     <div class="relative">
                         <textarea id="story-text" rows="8" class="w-full dark-input rounded-2xl p-6 placeholder-gray-500 resize-none" placeholder="Write Your Special Story Here...✍️"></textarea>
-                        <div class="absolute bottom-4 right-4 text-sm dark-text-secondary" id="char-count">0/1000</div>
+                        <div class="absolute bottom-4 right-4 text-sm dark-text-secondary" id="char-count">0/10000</div>
                     </div>
                     <button type="submit" class="w-full mt-6 btn-gradient py-4 rounded-2xl font-bold text-lg micro-interaction glow-hover">RELEASE STORY</button>
                 </form>
@@ -281,19 +281,21 @@
       const authSignupBtn = document.getElementById('auth-signup-btn');
       const authCancel = document.getElementById('auth-cancel');
 
-      /*******************************
-       * Character counter
-       *******************************/
-      storyText.addEventListener('input', () => {
-        const count = storyText.value.length;
-        charCount.textContent = `${count}/1000`;
-        if (count > 1000) {
-          charCount.classList.add('text-purple-400');
-          storyText.value = storyText.value.substring(0, 1000);
-        } else {
-          charCount.classList.remove('text-purple-400');
-        }
-      });
+
+/*******************************
+ * Character counter (10,000 limit)
+ *******************************/
+storyText.addEventListener('input', () => {
+  const count = storyText.value.length;
+  charCount.textContent = `${count}/10000`;
+  if (count > 10000) {
+    charCount.classList.add('text-purple-400');
+    storyText.value = storyText.value.substring(0, 10000);
+  } else {
+    charCount.classList.remove('text-purple-400');
+  }
+});
+
 
       /*******************************
        * UI update based on auth
@@ -744,7 +746,7 @@ await db.collection('stories').add({
 });
 
           storyText.value = '';
-          charCount.textContent = '0/1000';
+          charCount.textContent = '0/10000';
           showToast('Your Story Has Been Uploaded This Page!', 'success');
           // Firestore real-time listener will update UI automatically
         } catch (err) {
